@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.kodonho.aroc
 
 import android.os.Bundle
 import android.widget.Toast // 알림을 위한

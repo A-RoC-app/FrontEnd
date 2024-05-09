@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.kodonho.aroc
 
 import android.os.Bundle
 import android.util.Log
