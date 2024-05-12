@@ -17,7 +17,8 @@
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/back_description"/>
 
 
     <LinearLayout
@@ -40,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="회원유형"
+            android:text="@string/usertype"
             android:textColor="@color/white"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -61,7 +62,7 @@
                 android:id="@+id/userRadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="사용자"
+                android:text="@string/user"
                 android:textColor="@color/white"
                 />
 
@@ -69,7 +70,7 @@
                 android:id="@+id/guardianRadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="보호자"
+                android:text="@string/guardian"
 
                 android:textColor="@color/white" />
         </RadioGroup>
@@ -78,11 +79,12 @@
             android:id="@+id/signupEmail"
             android:layout_width="356dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
             android:background="@drawable/edit_text_border_orange"
             android:ems="10"
-            android:hint="  이메일"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
+            android:autofillHints="emailAddress"
             android:textColor="@color/white"
             android:textColorHint="@color/gray" />
 
@@ -90,12 +92,13 @@
             android:id="@+id/signupPwd"
             android:layout_width="356dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="30dp"
             android:background="@drawable/edit_text_border_orange"
             android:ems="10"
-            android:hint="  비밀번호"
+            android:hint="@string/password"
             android:inputType="textPassword"
+            android:autofillHints="password"
             android:textColor="@color/white"
             android:textColorHint="@color/gray" />
 
@@ -103,12 +106,13 @@
             android:id="@+id/signupName"
             android:layout_width="356dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="30dp"
             android:background="@drawable/edit_text_border_orange"
             android:ems="10"
-            android:hint="  이름"
+            android:hint="@string/name"
             android:inputType="textPersonName"
+            android:autofillHints="name"
             android:textColor="@color/white"
             android:textColorHint="@color/gray" />
 
@@ -116,12 +120,13 @@
             android:id="@+id/signupPhone"
             android:layout_width="356dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="30dp"
             android:background="@drawable/edit_text_border_orange"
             android:ems="10"
-            android:hint="  전화번호"
+            android:hint="@string/number"
             android:inputType="phone"
+            android:autofillHints="phone"
             android:textColor="@color/white"
             android:textColorHint="@color/gray" />
 
@@ -129,10 +134,10 @@
             android:id="@+id/signupBtn"
             android:layout_width="356dp"
             android:layout_height="64dp"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="35dp"
             android:layout_marginBottom="250dp"
-            android:text="회원가입"
+            android:text="@string/signup"
             android:textSize="18sp"
             app:backgroundTint="@color/btn_color" />
 
