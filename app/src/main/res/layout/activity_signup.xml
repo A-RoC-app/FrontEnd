@@ -64,6 +64,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/user"
                 android:textColor="@color/white"
+                android:tag="1"
                 />
 
             <RadioButton
@@ -71,8 +72,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/guardian"
-
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:tag="0"/>
         </RadioGroup>
 
         <EditText

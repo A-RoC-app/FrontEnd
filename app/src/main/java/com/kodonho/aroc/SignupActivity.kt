@@ -1,15 +1,23 @@
 package com.kodonho.aroc
 
 import android.os.Bundle
-import android.widget.Toast // 알림을 위한
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.kodonho.aroc.RetrofitInstance.RetrofitBuilder
+import com.kodonho.aroc.api.MemberJoin
+import com.kodonho.aroc.dto.MemberJoinDto
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.regex.Pattern
+
+
 
 class SignupActivity : AppCompatActivity() {
 
@@ -64,14 +72,38 @@ class SignupActivity : AppCompatActivity() {
             Log.d("SignupActivity", "Email: $email, Password: $password, Name: $name, Phone: $phone, UserType: $userType")
 
             // TODO: 서버에 회원가입 요청 및 처리
+            val signUp: MemberJoin = RetrofitBuilder.getRetrofit().create(MemberJoin::class.java)
+
+            val memberJoinDto = MemberJoinDto(
+                email = email,
+                password = password,
+                name = name,
+                phone = phone,
+                userType = userType
+            )
+
+            signUp.signup(memberJoinDto).enqueue(object : Callback<MemberJoinDto> {
+                override fun onResponse(call: Call<MemberJoinDto>, response: Response<MemberJoinDto>) {
+                    if (response.isSuccessful) {
+                        val memberResponse = response.body()
+                        Toast.makeText(this@SignupActivity, "로그인 성공", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@SignupActivity, "Sign up failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<MemberJoinDto>, t: Throwable) {
+                    Toast.makeText(this@SignupActivity, "Network error", Toast.LENGTH_SHORT).show()
+                }
+            })
 
             // TODO: 회원가입 성공 또는 실패에 따른 처리
         }
     }
 
-    private fun validateInput(email: String, password: String, name: String, phone: String, userType: String): Boolean {
+    private fun validateInput(email: String, password: String, name: String, phone: String, userType: Int): Boolean {
         // 각 필드의 입력값이 비어있는지 확인
-        if (email.isEmpty() || password.isEmpty() || name.isEmpty() || phone.isEmpty() || userType.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() || name.isEmpty() || phone.isEmpty() || userType == -1) {
             // 입력되지 않은 필드가 있을 경우 메시지 출력
             showMessage("모든 정보를 입력하세요.")
             return false
@@ -109,13 +141,14 @@ class SignupActivity : AppCompatActivity() {
         return letter.matcher(password).find() && digit.matcher(password).find()
     }
 
-    private fun getUserType(): String {
+    private fun getUserType(): Int {
         // 선택된 RadioButton의 ID를 사용하여 사용자 유형을 반환
         val selectedRadioButtonId = userTypeRadioGroup.checkedRadioButtonId
 
-        if(selectedRadioButtonId == -1) return "" // 선택된 라디오 버튼이 없을때
+        if (selectedRadioButtonId == -1) return -1 // 선택된 라디오 버튼이 없을 때
 
         val selectedRadioButton: RadioButton = findViewById(selectedRadioButtonId)
-        return selectedRadioButton.text.toString()
+        return selectedRadioButton.tag.toString().toInt()
     }
+
 }
