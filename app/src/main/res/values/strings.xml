@@ -11,4 +11,12 @@
     <string name="name">이름</string>
     <string name="number">전화번호</string>
     <string name="logo">이 앱의 로고입니다.(지도와 흰지팡이가 그려져 있습니다.)</string>
+    <string name="map">길찾기</string>
+    <string name="location">내 위치</string>
+    <string name="detection">장애물 탐지</string>
+    <string name="my_info">내 회원정보</string>
+    <string name="my_guardian">나의 보호자 관리</string>
+    <string name="speech_input">음성 입력</string>
+    <string name="destination">목적지</string>
+    <string name="submit">전송</string>
 </resources>
