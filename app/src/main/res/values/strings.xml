@@ -19,4 +19,5 @@
     <string name="speech_input">음성 입력</string>
     <string name="destination">목적지</string>
     <string name="submit">전송</string>
+    <string name="status">상태 체크</string>
 </resources>
