@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.kodonho.aroc.databinding.ActivityMapSearchBinding
 
 class MapSearch : AppCompatActivity() {
@@ -76,7 +77,7 @@ class MapSearch : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun getLocation() {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationProviderClient.lastLocation
+        fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
             .addOnSuccessListener { success: Location? ->
                 success?.let { location ->
                     Log.d(TAG, "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
@@ -206,4 +207,5 @@ class MapSearch : AppCompatActivity() {
             Log.d(TAG, "onEvent: $eventType")
         }
     }
+
 }
