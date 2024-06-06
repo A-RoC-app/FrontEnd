@@ -15,9 +15,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
+import com.google.android.gms.location.Priority
+import com.kodonho.aroc.api.MapSearch
 import com.kodonho.aroc.databinding.ActivityMapSearchBinding
+import com.kodonho.aroc.dto.MapSearchDto
+import com.kodonho.aroc.RetrofitInstance.RetrofitBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MapSearch : AppCompatActivity() {
 
@@ -34,6 +41,10 @@ class MapSearch : AppCompatActivity() {
         binding = ActivityMapSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // RecyclerView 초기화
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = MapSearchAdapter(emptyList())
+
         // 위치 권한이 허용되었는지 확인하고, 허용되지 않은 경우 요청
         if (!LocationHelper(this).isLocationPermitted()) {
             LocationHelper(this).requestLocation()
@@ -41,7 +52,23 @@ class MapSearch : AppCompatActivity() {
 
         // 위치 권한이 허용된 경우 위치 정보를 가져옵니다.
         if (LocationHelper(this).isLocationPermitted()) {
-            getLocation()
+            getLocation { location ->
+                location?.let {
+                    val latitude = it.latitude
+                    val longitude = it.longitude
+                    // 위치 정보가 성공적으로 받아졌을 때만 submit 버튼을 활성화
+                    binding.submitBtn.setOnClickListener {
+                        val destination = binding.destination.text.toString()
+                        if (destination.isNotEmpty()) {
+                            searchLocation(destination, latitude, longitude)
+                        } else {
+                            Toast.makeText(this, "목적지를 입력하세요.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } ?: run {
+                    Toast.makeText(this, "위치 정보를 가져오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
         } else {
             Log.e(TAG, "Location permission not granted")
         }
@@ -62,32 +89,41 @@ class MapSearch : AppCompatActivity() {
         binding.speechBtn.setOnClickListener {
             startSpeechRecognition(intent)
         }
-
-        // 입력칸에 있는 거 읽어서 백엔드로 전송
-        binding.submitBtn.setOnClickListener {
-            val destination = binding.destination.text.toString()
-            if (destination.isNotEmpty()) {
-                // sendDestination(destination)
-            } else {
-                Toast.makeText(this, "목적지를 입력하세요.", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLocation() {
+    private fun getLocation(callback: (Location?) -> Unit) {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-            .addOnSuccessListener { success: Location? ->
-                success?.let { location ->
-                    Log.d(TAG, "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
-                } ?: run {
-                    Log.e(TAG, "Location is null")
-                }
+        fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+            .addOnSuccessListener { location: Location? ->
+                callback(location)
             }
             .addOnFailureListener { fail ->
                 Log.e(TAG, "Failed to get location: ${fail.localizedMessage}")
+                callback(null)
             }
+    }
+
+    private fun searchLocation(destination: String, lat: Double, lon: Double) {
+        val retrofit = RetrofitBuilder.getRetrofit()
+        val service = retrofit.create(MapSearch::class.java)
+        val call = service.search(destination, lat, lon)
+        call.enqueue(object : Callback<List<MapSearchDto>> {
+            override fun onResponse(call: Call<List<MapSearchDto>>, response: Response<List<MapSearchDto>>) {
+                if (response.isSuccessful) {
+                    val pois = response.body()
+                    pois?.let {
+                        binding.recyclerView.adapter = MapSearchAdapter(it)
+                    }
+                } else {
+                    Log.e(TAG, "Request failed: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<MapSearchDto>>, t: Throwable) {
+                Log.e(TAG, "Network request failed: ${t.localizedMessage}")
+            }
+        })
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -95,7 +131,16 @@ class MapSearch : AppCompatActivity() {
         when (requestCode) {
             LocationHelper.REQUEST_LOCATION_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                    getLocation()
+                    getLocation { location ->
+                        location?.let {
+                            val latitude = it.latitude
+                            val longitude = it.longitude
+                            val destination = binding.destination.text.toString()
+                            if (destination.isNotEmpty()) {
+                                searchLocation(destination, latitude, longitude)
+                            }
+                        }
+                    }
                 } else {
                     Toast.makeText(this, "위치 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
                     Log.e(TAG, "위치 권한 거부됨")
@@ -207,5 +252,4 @@ class MapSearch : AppCompatActivity() {
             Log.d(TAG, "onEvent: $eventType")
         }
     }
-
 }
