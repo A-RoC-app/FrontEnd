@@ -29,9 +29,6 @@
             android:name=".UserInfoUpdateActivity"
             android:exported="false" />
         <activity
-            android:name=".UserInfoViewActivity"
-            android:exported="false" />
-        <activity
             android:name=".GuarListViewActivity"
             android:exported="false" />
         <activity
