@@ -17,8 +17,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.regex.Pattern
 
-
-
 class SignupActivity : AppCompatActivity() {
 
     private lateinit var signupEmail: EditText
@@ -30,6 +28,8 @@ class SignupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
+
+        RetrofitBuilder.initialize(applicationContext) // 초기화
 
         signupEmail = findViewById(R.id.signupEmail)
         signupPwd = findViewById(R.id.signupPwd)
@@ -72,7 +72,7 @@ class SignupActivity : AppCompatActivity() {
             Log.d("SignupActivity", "Email: $email, Password: $password, Name: $name, Phone: $phone, UserType: $userType")
 
             // TODO: 서버에 회원가입 요청 및 처리
-            val signUp: MemberJoin = RetrofitBuilder.getRetrofit().create(MemberJoin::class.java)
+            val signUp: MemberJoin = RetrofitBuilder.createService(MemberJoin::class.java)
 
             val memberJoinDto = MemberJoinDto(
                 email = email,
@@ -86,7 +86,7 @@ class SignupActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<MemberJoinDto>, response: Response<MemberJoinDto>) {
                     if (response.isSuccessful) {
                         val memberResponse = response.body()
-                        Toast.makeText(this@SignupActivity, "로그인 성공", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@SignupActivity, "회원가입 성공", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this@SignupActivity, "Sign up failed", Toast.LENGTH_SHORT).show()
                     }
@@ -150,5 +150,4 @@ class SignupActivity : AppCompatActivity() {
         val selectedRadioButton: RadioButton = findViewById(selectedRadioButtonId)
         return selectedRadioButton.tag.toString().toInt()
     }
-
 }
