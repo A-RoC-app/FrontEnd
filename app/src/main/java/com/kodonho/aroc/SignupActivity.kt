@@ -23,6 +23,8 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
+        RetrofitBuilder.initialize(applicationContext) // 초기화
+
         signupEmail = findViewById(R.id.signupEmail)
         signupPwd = findViewById(R.id.signupPwd)
         signupName = findViewById(R.id.signupName)
@@ -64,6 +66,33 @@ class SignupActivity : AppCompatActivity() {
             Log.d("SignupActivity", "Email: $email, Password: $password, Name: $name, Phone: $phone, UserType: $userType")
 
             // TODO: 서버에 회원가입 요청 및 처리
+<<<<<<< Updated upstream
+=======
+            val signUp: MemberJoin = RetrofitBuilder.createService(MemberJoin::class.java)
+
+            val memberJoinDto = MemberJoinDto(
+                email = email,
+                password = password,
+                name = name,
+                phone = phone,
+                userType = userType
+            )
+
+            signUp.signup(memberJoinDto).enqueue(object : Callback<MemberJoinDto> {
+                override fun onResponse(call: Call<MemberJoinDto>, response: Response<MemberJoinDto>) {
+                    if (response.isSuccessful) {
+                        val memberResponse = response.body()
+                        Toast.makeText(this@SignupActivity, "회원가입 성공", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@SignupActivity, "Sign up failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<MemberJoinDto>, t: Throwable) {
+                    Toast.makeText(this@SignupActivity, "Network error", Toast.LENGTH_SHORT).show()
+                }
+            })
+>>>>>>> Stashed changes
 
             // TODO: 회원가입 성공 또는 실패에 따른 처리
         }
