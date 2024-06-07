@@ -22,6 +22,7 @@ import com.kodonho.aroc.api.MapSearch
 import com.kodonho.aroc.databinding.ActivityMapSearchBinding
 import com.kodonho.aroc.dto.MapSearchDto
 import com.kodonho.aroc.RetrofitInstance.RetrofitBuilder
+import com.kodonho.aroc.api.MemberInfoUpdate
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,6 +41,8 @@ class MapSearch : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMapSearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        RetrofitBuilder.initialize(applicationContext) // 초기화
 
         // RecyclerView 초기화
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -105,8 +108,9 @@ class MapSearch : AppCompatActivity() {
     }
 
     private fun searchLocation(destination: String, lat: Double, lon: Double) {
-        val retrofit = RetrofitBuilder.getRetrofit()
-        val service = retrofit.create(MapSearch::class.java)
+        //val retrofit = RetrofitBuilder.getRetrofit()
+        val service = RetrofitBuilder.createService(MapSearch::class.java)
+        //val service = retrofit.create(MapSearch::class.java)
         val call = service.search(destination, lat, lon)
         call.enqueue(object : Callback<List<MapSearchDto>> {
             override fun onResponse(call: Call<List<MapSearchDto>>, response: Response<List<MapSearchDto>>) {

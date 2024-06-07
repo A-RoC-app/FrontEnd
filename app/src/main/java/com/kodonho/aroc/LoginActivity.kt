@@ -1,6 +1,8 @@
 package com.kodonho.aroc
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -22,6 +24,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var authService: AuthService
+    private lateinit var sharedPreferences: SharedPreferences
+
     companion object {
         private const val TAG = "LoginActivity"
     }
@@ -39,6 +43,7 @@ class LoginActivity : AppCompatActivity() {
         val backButton: ImageButton = findViewById(R.id.backButton)
 
         authService = RetrofitBuilder.createService(AuthService::class.java)
+        sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
 
         loginButton.setOnClickListener {
             login()
@@ -76,6 +81,9 @@ class LoginActivity : AppCompatActivity() {
                         // 확인용
                         val cookies = response.headers()["Set-Cookie"]
                         Log.d(TAG, "Set-Cookie: $cookies")
+
+                        saveEmailToPreferences(email)
+
                         getMemberInfo(email)
                     } else {
                         Toast.makeText(this@LoginActivity, "응답 데이터가 잘못되었습니다.", Toast.LENGTH_SHORT).show()
@@ -88,6 +96,18 @@ class LoginActivity : AppCompatActivity() {
             })
         }
     }
+
+    // 이메일은 sharedPreferences로 만드는 메소드
+    private fun saveEmailToPreferences(email: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("user_email", email)
+        editor.apply()
+
+        // 저장된 이메일 확인
+        val savedEmail = sharedPreferences.getString("user_email", null)
+        Log.d(TAG, "SharedPreferences에 저장된 이메일: $savedEmail")
+    }
+
     private fun getMemberInfo(email: String) {
         val memberViewService = RetrofitBuilder.createService(MemberView::class.java)
 
