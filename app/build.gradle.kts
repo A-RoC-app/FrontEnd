@@ -35,6 +35,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        mlModelBinding = true
     }
 }
 
@@ -55,5 +56,14 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
     implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+    implementation ("org.tensorflow:tensorflow-lite-support:0.4.2")
+    implementation ("org.tensorflow:tensorflow-lite-metadata:0.1.0")
+    implementation ("org.tensorflow:tensorflow-lite:0.0.0-nightly")
+    implementation ("androidx.camera:camera-core:1.1.0")
+    implementation ("androidx.camera:camera-camera2:1.1.0")
+    implementation ("androidx.camera:camera-lifecycle:1.1.0")
+    implementation ("androidx.camera:camera-view:1.1.0")
+    implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
 
 }
