@@ -30,8 +30,9 @@ class Main2Activity : AppCompatActivity() {
 
         kakaoButton.setOnClickListener {
             Log.d("Main2Activity", "Kakao button clicked")
-
-            showUserTypeRegistrationPopup()
+            val intent = Intent(this, TensorActivity::class.java)
+            startActivity(intent)
+            //showUserTypeRegistrationPopup()
         } // 추후 수정 필요
     }
     private fun showUserTypeRegistrationPopup() {
